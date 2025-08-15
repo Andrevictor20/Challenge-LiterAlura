@@ -1,5 +1,6 @@
 package br.com.alura.challenge_LiterAlura;
 
+import br.com.alura.challenge_LiterAlura.principal.Principal;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,7 +19,7 @@ public class ChallengeLiterAluraApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        //System.out.println("Teste");
-
+        Principal principal = new Principal();
+        principal.exibeMenu();
     }
 }
