@@ -4,12 +4,9 @@ import java.util.List;
 
 public class Livro {
 
-    private String id;
+    private Long id;
     private String titulo;
-    private List<String> assuntos;
     private List<Autores> autores;
-    private List<String> resumos;
     private List<String> idiomas;
     private Integer downloads;
-
 }
