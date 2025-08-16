@@ -2,12 +2,16 @@ package br.com.alura.challenge_LiterAlura;
 
 import br.com.alura.challenge_LiterAlura.principal.Principal;
 import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class ChallengeLiterAluraApplication implements CommandLineRunner {
+
+    @Autowired
+    private Principal principal;
 
 	public static void main(String[] args) {
         Dotenv dotenv = Dotenv.load();
@@ -19,7 +23,6 @@ public class ChallengeLiterAluraApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Principal principal = new Principal();
         principal.exibeMenu();
     }
 }
