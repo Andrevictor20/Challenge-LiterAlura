@@ -51,10 +51,9 @@ public class Autores {
     }
     // ... (dentro da classe Autores)
 
+    // Versão alternativa mantendo os detalhes
     @Override
     public String toString() {
-        return "Autor: " + nome +
-                " (nascimento: " + anoNascimento +
-                ", falecimento: " + anoFalecimento + ")";
+        return nome + " (Nasc: " + anoNascimento + ", Falec: " + anoFalecimento + ")";
     }
 }

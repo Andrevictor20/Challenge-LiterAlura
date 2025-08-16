@@ -82,15 +82,24 @@ public class Livro {
     public void setDownloads(Integer downloads) {
         this.downloads = downloads;
     }
+
+
     @Override
     public String toString() {
-        return "Livro{" +
-                "id=" + id +
-                ", titulo='" + titulo + '\'' +
-                ", autores=" + autores +
-                ", idiomas=" + idiomas +
-                ", downloads=" + downloads +
-                '}';
+        String detalhesAutores = (autores != null && !autores.isEmpty()) ?
+                autores.stream()
+                        .map(Autores::toString) // 1
+                        .collect(Collectors.joining("\n             ")) :
+                "Autor desconhecido";
+
+        return """
+           ----- LIVRO -----
+           Título: %s
+           Autor(es): %s
+           Idioma(s): %s
+           Downloads: %d
+           -----------------
+           """.formatted(titulo, detalhesAutores, idiomas, downloads);
     }
 
 
