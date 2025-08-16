@@ -1,33 +1,35 @@
 package br.com.alura.challenge_LiterAlura.principal;
 
+import br.com.alura.challenge_LiterAlura.model.Autores;
 import br.com.alura.challenge_LiterAlura.model.DadosLivro;
 import br.com.alura.challenge_LiterAlura.model.DadosResultados;
 import br.com.alura.challenge_LiterAlura.model.Livro;
+import br.com.alura.challenge_LiterAlura.repository.AutoresRepository;
 import br.com.alura.challenge_LiterAlura.repository.LivroRepository;
 import br.com.alura.challenge_LiterAlura.service.ConsumoApi;
 import br.com.alura.challenge_LiterAlura.service.ConverteDados;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.util.*;
 
 @Component
 public class Principal {
 
+    private final LivroRepository livroRepositorio;
+    private final AutoresRepository autoresRepositoio;
     private ConsumoApi consumo = new ConsumoApi();
     private Scanner leitura = new Scanner(System.in);
     private ConverteDados conversor = new ConverteDados();
     private List<Livro> livros = new ArrayList<>();
+    private List<Autores> autores = new ArrayList<>();
     private List<DadosLivro> dadosLivros= new ArrayList<>();
     private String ENDERECO = "https://gutendex.com/books?search=";
-    private final LivroRepository repositorio;
 
     @Autowired
-    public Principal(LivroRepository repositorio) {
-        this.repositorio = repositorio;
+    public Principal(LivroRepository livroRepositorio, AutoresRepository autoresRepositorio) {
+        this.livroRepositorio = livroRepositorio;
+        this.autoresRepositoio = autoresRepositorio;
     }
 
     public void exibeMenu() {
@@ -71,45 +73,74 @@ public class Principal {
         }
     }
 
-    private Optional<DadosLivro> getDadosLivro() {
+    private Optional<DadosLivro> getDadosLivroDaApi() {
         System.out.println("Digite o nome do livro para a busca: ");
         var nomeLivro = leitura.nextLine();
         var enderecoBusca = ENDERECO + nomeLivro.replace(" ", "%20");
         System.out.println("URL da busca: " + enderecoBusca);
 
         var json = consumo.obterDados(enderecoBusca);
-        DadosResultados dadosResultados = conversor.obterDados(json, DadosResultados.class);
-        return dadosResultados.resultados().stream().findFirst();
+
+        DadosResultados resultados = conversor.obterDados(json, DadosResultados.class);
+
+        return resultados.resultados().stream().findFirst();
     }
 
     private void buscarLivroPeloTitulo() {
-        Optional<DadosLivro> dadosLivroOpcional = getDadosLivro();
+        Optional<DadosLivro> dadosLivroOpcional = getDadosLivroDaApi();
+
         if (dadosLivroOpcional.isPresent()) {
-            DadosLivro dadosLivro = dadosLivroOpcional.get();
-            Livro livro = new Livro(dadosLivro);
-            repositorio.save(livro);
+            DadosLivro dadosDoLivro = dadosLivroOpcional.get();
+
+            Livro livro = new Livro(dadosDoLivro);
+
+            livroRepositorio.save(livro);
+
+
             System.out.println("Livro salvo com sucesso!");
-            System.out.println(livro); // Imprime os dados do livro salvo
+            System.out.println(livro);
         } else {
             System.out.println("Nenhum livro encontrado com esse título.");
         }
     }
 
-
     private void ListarLivros() {
+        System.out.println("Livros cadastrados: ");
+        livros = livroRepositorio.findAll();
+        livros.stream().forEach(System.out::println);
     }
 
-
-
     private void ListarAutores(){
+        System.out.println("Autores cadastrados: ");
+        autores = autoresRepositoio.findAll();
+        autores.stream().forEach(System.out::println);
 
     }
 
     private void ListarAutoresVivosPorAno(){
+        System.out.println("Digite o ano que deseja verificar: ");
+        var ano = leitura.nextInt();
+
+        List<Autores> autoresVivos = autoresRepositoio
+                .findByAnoNascimentoLessThanEqualAndAnoFalecimentoGreaterThanEqualOrAnoFalecimentoIsNull(ano, ano);
+
+        if (autoresVivos.isEmpty()) {
+            System.out.println("Nenhum autor encontrado vivo no ano " + ano);
+        } else {
+            autoresVivos.forEach(System.out::println);
+        }
 
     }
 
     private void ListarLivrosPorIdioma(){
+        System.out.println("Digite o idioma (pt,en,fr,es,etc.) do livro : ");
+        var idioma = leitura.nextLine();
+        livros = livroRepositorio.findByIdiomasContaining(idioma);
+        if(livros.isEmpty()){
+            System.out.println("Não há livros cadastrados com esse idioma");
+        }else{
+            livros.stream().forEach(System.out::println);
+        }
 
     }
 }
