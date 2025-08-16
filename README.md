@@ -1,7 +1,3 @@
-Claro, sem problemas. Aqui está a versão do `README.md` sem a seção do autor.
-
------
-
 # LiterAlura - Catálogo de Livros
 
 ## 📖 Descrição do Projeto
